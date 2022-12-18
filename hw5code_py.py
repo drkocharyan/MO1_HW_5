@@ -75,7 +75,7 @@ class DecisionTree:
             return
 
         feature_best, threshold_best, gini_best, split = None, None, None, None
-        for feature in range(1, sub_X.shape[1]):
+        for feature in range(sub_X.shape[1]):
             feature_type = self._feature_types[feature]
             categories_map = {}
 
@@ -94,7 +94,7 @@ class DecisionTree:
                 sorted_categories = list(map(lambda x: x[0], sorted(ratio.items(), key=lambda x: x[1])))
                 categories_map = dict(zip(sorted_categories, list(range(len(sorted_categories)))))
 
-                feature_vector = np.array(map(lambda x: categories_map[x], sub_X[:, feature]))
+                feature_vector = np.array(list(map(lambda x: categories_map[x], sub_X[:, feature])))
             else:
                 raise ValueError
 
