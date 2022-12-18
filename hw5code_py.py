@@ -90,7 +90,7 @@ class DecisionTree:
                         current_click = clicks[key]
                     else:
                         current_click = 0
-                    ratio[key] = current_count / current_click
+                    ratio[key] = current_click / current_count 
                 sorted_categories = list(map(lambda x: x[1], sorted(ratio.items(), key=lambda x: x[1])))
                 categories_map = dict(zip(sorted_categories, list(range(len(sorted_categories)))))
 
@@ -134,8 +134,25 @@ class DecisionTree:
         self._fit_node(sub_X[np.logical_not(split)], sub_y[split], node["right_child"])
 
     def _predict_node(self, x, node):
-        # ╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ
-        pass
+        if node["type"] == "terminal":
+            return node["class"]
+        else:
+            feature = node["feature_split"]
+            if self._feature_types[feature] == "real":
+                if x[feature] < node["threshold"]:
+                    y_pred = self._predict_node(x, node["left_child"])
+                else:
+                    y_pred = self._predict_node(x, node["right_child"])
+            
+            elif self._feature_types[feature] == "categorical":
+                if x[feature] in node["categories_split"]:
+                    y_pred = self._predict_node(x, node["left_child"])
+                else:
+                    y_pred = self._predict_node(x, node["right_child"])
+            else:
+                raise ValueError
+                    
+        return y_pred
 
     def fit(self, X, y):
         self._fit_node(X, y, self._tree)
